@@ -1,0 +1,13 @@
+en:
+  practice_checklist:
+    models:
+      checklist: "Checklist"
+      checklist_item: "Task"
+    fields:
+      name: "List Name"
+      status: "Status"
+      is_done: "Completed"
+      assigned_user_id: "Assigned to"
+    actions:
+      close: "Finish List"
+      set_done: "Set as Done"
