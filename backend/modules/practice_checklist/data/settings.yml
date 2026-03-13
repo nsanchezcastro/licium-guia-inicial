@@ -1,4 +1,4 @@
-- model: core.setting
+- model: core.settings
   ext_id: practice_checklist_setting_enforce_done
   fields:
     key: practice_checklist.enforce_all_items_done

@@ -1,0 +1,10 @@
+- model: core.aclrule
+  ext_id: acl_checklist_FINAL_RESCUE
+  fields:
+    # Probamos con el nombre de la tabla que definiste en Python
+    model_key: "practice_checklist" 
+    group_id: 1
+    perm_read: true
+    perm_write: true
+    perm_create: true
+    perm_unlink: true

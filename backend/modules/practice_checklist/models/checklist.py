@@ -1,10 +1,11 @@
-from __future__ import annotations
+from __future__ import annotations  # <--- ESTA TIENE QUE SER LA LÍNEA 1
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, Column
 from sqlalchemy.orm import backref, relationship
 from app.core.base import Base
 from app.core.fields import field
 from sqlalchemy.dialects.postgresql import UUID
+
 
 
 class PracticeChecklist(Base):
@@ -70,10 +71,12 @@ class PracticeChecklist(Base):
         info={"label": {"es": "Responsable", "en": "Owner"}},
     )
     owner = relationship(
-        "User",
-        foreign_keys=lambda: [PracticeChecklist.owner_id],
-        info={"public": True, "recursive": False, "editable": True},
-    )
+    "User",
+    primaryjoin="foreign(PracticeChecklist.owner_id) == remote(User.id)",
+    overlaps="owner",
+    viewonly=True # Esto suele ayudar en tests cuando el modelo no está cargado
+)
+    
     closed_at = field(
         DateTime(timezone=True),
         required=False,

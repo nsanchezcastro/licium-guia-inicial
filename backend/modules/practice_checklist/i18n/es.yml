@@ -1,7 +1,9 @@
 es:
   practice_checklist:
     models:
-      checklist: "Lista de Tareas"
+      checklist: 
+        one: "Lista de Tareas"
+        other: "Listas de Tareas"
       checklist_item: "Tarea"
     fields:
       name: "Nombre de la Lista"
@@ -18,3 +20,12 @@ es:
       set_done: "Marcar como hecha"
     messages:
       pending_error: "No se puede cerrar: hay %{count} tareas pendientes."
+  
+    groups:
+      basic: "Información Básica"
+      description: "Descripción"
+      items: "Tareas de la Lista"
+      audit: "Auditoría"
+    messages:
+      reopen_confirm: "¿Estás seguro de que quieres reabrir esta lista?"
+      close_confirm: "¿Quieres marcar esta lista como finalizada?"

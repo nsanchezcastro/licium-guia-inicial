@@ -28,6 +28,7 @@ class ChecklistItem(Base):
     is_done = Column(Boolean, default=False)
     done_at = Column(DateTime(timezone=True))
     assigned_user_id = Column(UUID(as_uuid=True), ForeignKey("core_user.id"))
+    priority = Column(String(20), default="medium")
 
     
     checklist = relationship("Checklist", back_populates="items")

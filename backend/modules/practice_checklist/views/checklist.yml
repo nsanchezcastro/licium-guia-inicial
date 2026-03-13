@@ -1,0 +1,10 @@
+- model: ui.view
+  ext_id: practice_checklist_view_checklist_custom
+  fields:
+    name: "Checklist - Vista Custom"
+    model_key: practice_checklist.checklist
+    type_id.ext_id: ui.ui_view_type_list
+    definition:
+      columns:
+        - { field: title, label: "Tarea" }
+        - { field: priority, label: "Prioridad" }
