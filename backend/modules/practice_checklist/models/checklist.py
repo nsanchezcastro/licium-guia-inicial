@@ -1,12 +1,10 @@
-from __future__ import annotations  # <--- ESTA TIENE QUE SER LA LÍNEA 1
+from __future__ import annotations  
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text, Column
+from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import backref, relationship
 from app.core.base import Base
 from app.core.fields import field
 from sqlalchemy.dialects.postgresql import UUID
-
-
 
 class PracticeChecklist(Base):
     __tablename__ = "practice_checklist"
@@ -63,7 +61,7 @@ class PracticeChecklist(Base):
         info={"label": {"es": "Público", "en": "Public"}},
     )
     owner_id = field(
-        UUID(as_uuid=True),
+        UUID(as_uuid=True), 
         ForeignKey("core_user.id"),
         required=False,
         public=True,
@@ -71,12 +69,11 @@ class PracticeChecklist(Base):
         info={"label": {"es": "Responsable", "en": "Owner"}},
     )
     owner = relationship(
-    "User",
-    primaryjoin="foreign(PracticeChecklist.owner_id) == remote(User.id)",
-    overlaps="owner",
-    viewonly=True # Esto suele ayudar en tests cuando el modelo no está cargado
-)
-    
+        "User",
+        primaryjoin="foreign(PracticeChecklist.owner_id) == remote(User.id)",
+        overlaps="owner",
+        viewonly=True 
+    )
     closed_at = field(
         DateTime(timezone=True),
         required=False,
@@ -84,7 +81,6 @@ class PracticeChecklist(Base):
         editable=False,
         info={"label": {"es": "Cerrado en", "en": "Closed at"}},
     )
-
 
 class PracticeChecklistItem(Base):
     __tablename__ = "practice_checklist_item"
@@ -131,6 +127,23 @@ class PracticeChecklistItem(Base):
         editable=True,
         info={"label": {"es": "Nota", "en": "Note"}},
     )
+    
+    priority = field(
+        String(20),
+        required=True,
+        public=True,
+        editable=True,
+        default="medium",
+        info={
+            "label": {"es": "Prioridad", "en": "Priority"},
+            "choices": [
+                {"label": "Alta", "value": "high"},
+                {"label": "Media", "value": "medium"},
+                {"label": "Baja", "value": "low"},
+            ],
+        },
+    )
+
     assigned_user_id = field(
         UUID(as_uuid=True),
         ForeignKey("core_user.id"),

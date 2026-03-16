@@ -1,13 +1,9 @@
-- model: core.settings
-  ext_id: practice_checklist_setting_enforce_done
+- model: core.setting
+  ext_id: setting_practice_checklist_enforce_done
   fields:
+    module: practice_checklist
     key: practice_checklist.enforce_all_items_done
-    label:
-      es: "Forzar finalización de ítems"
-      en: "Enforce items completion"
-    description:
-      es: "Si está activo, no permitirá cerrar la checklist si hay ítems pendientes."
-      en: "If active, it won't allow closing the checklist if there are pending items."
-    type: boolean
-    value: true 
-    group: "Practice Checklist"
+    value: "true"
+    value_type: boolean
+    category: "General"
+    description: "Si es true, no permite cerrar el checklist si hay ítems pendientes."

@@ -1,0 +1,14 @@
+- model: ui.menuitem
+  ext_id: menu_asset_lending_root
+  technical_name: asset_lending.root
+  title: "Prestamos"
+  icon: "mdi-package-variant-closed"
+  placement: "sidebar"
+
+- model: ui.menuitem
+  ext_id: menu_asset_lending_assets
+  technical_name: asset_lending.assets
+  parent_ext_id: menu_asset_lending_root
+  title: "Recursos"
+  icon: "mdi-devices"
+  action_ext_id: view_asset_list

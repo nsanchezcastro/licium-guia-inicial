@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import datetime as dt
 from fastapi import HTTPException
 
@@ -6,13 +7,14 @@ from app.core.base import BaseService
 from app.core.context import get_current_user_id
 from app.core.serializer import serialize
 from app.core.services import exposed_action
+
+from app.base.core.services.setting import get_setting_value
+
 from ..models import PracticeChecklist, PracticeChecklistItem
 
 class PracticeChecklistService(BaseService):
-    # La importación interna no es necesaria si ya están arriba, 
-    # pero la dejamos si tu framework la requiere específicamente.
 
-    def create(self, obj):  # type: ignore[override]
+    def create(self, obj):  
         if not isinstance(obj, dict):
             return super().create(obj)
         payload = dict(obj)
@@ -28,23 +30,29 @@ class PracticeChecklistService(BaseService):
         if rec is None:
             raise HTTPException(404, "Checklist not found")
 
-    # 1. Validación de ítems pendientes
-        enforce_completion = self.repo.get_setting("practice_checklist.enforce_all_items_done", True)
+        enforce_completion = get_setting_value(
+            self.repo.session, 
+            "practice_checklist.enforce_all_items_done", 
+            module="practice_checklist", 
+            default=True
+        )
+
         if enforce_completion and any(not item.is_done for item in rec.items):
             raise HTTPException(400, "No se puede cerrar: hay ítems pendientes.")
 
-    # 2. CAMBIO DE ESTADO (Aquí es donde debe ir)
         rec.status = "closed"
+        rec.is_public = bool(make_public)
+        rec.closed_at = dt.datetime.now(dt.timezone.utc)
+        
         if close_note:
-            rec.description = f"{rec.description or ''}\nNote: {close_note}"
+            base = (rec.description or "").strip()
+            rec.description = f"{base}\n\n[Cierre] {close_note}".strip()
     
-    # 3. Guardar cambios
         self.repo.session.add(rec)
         self.repo.session.commit()
+        self.repo.session.refresh(rec)
 
-    # 4. Retorno
-        return {"id": rec.id, "status": rec.status} # Cambiamos serialize(rec) por un dict simple para el test
-
+        return serialize(rec)
    
     @exposed_action("write", groups=["practice_checklist_group_manager", "core_group_superadmin"])
     def reopen(self, id: int) -> dict:

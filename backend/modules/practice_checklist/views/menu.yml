@@ -17,10 +17,10 @@
     model_path: "practice_checklist/checklist"
     menu: true
     context:
-      #allowed_group_ext_ids:
-       # - practice_checklist_group_reader
-        #- practice_checklist_group_manager
-        #- core_group_superadmin
+      allowed_group_ext_ids:
+        - practice_checklist_group_reader
+        - practice_checklist_group_manager
+        - core_group_superadmin
     default_multi_read_view_id.ext_id: practice_checklist_view_checklist_list
     default_single_edit_view_id.ext_id: practice_checklist_view_checklist_form
     views.ext_id:
@@ -46,10 +46,10 @@
     model_path: "practice_checklist/checklist_item"
     menu: true
     context:
-      #allowed_group_ext_ids:
-       # - practice_checklist_group_reader
-        #- practice_checklist_group_manager
-        #- core_group_superadmin
+      allowed_group_ext_ids:
+        - practice_checklist_group_reader
+        - practice_checklist_group_manager
+        - core_group_superadmin
     default_multi_read_view_id.ext_id: practice_checklist_view_item_list
     default_single_edit_view_id.ext_id: practice_checklist_view_item_form
     views.ext_id:

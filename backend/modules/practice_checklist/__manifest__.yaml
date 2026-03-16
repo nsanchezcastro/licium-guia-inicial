@@ -3,9 +3,11 @@ technical_name: practice_checklist
 version: 1.0.2
 depends:
   - ui
+  - core
 data:
   - data/groups.yml
-  - data/permissions.yml
+  - data/acl_rules.yml
+  - data/settings.yml      
   - data/ui_modules.yml
   - views/views.yml
   - views/menu.yml
