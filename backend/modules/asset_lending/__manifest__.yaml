@@ -1,10 +1,10 @@
 name: "Asset Lending"
 technical_name: "asset_lending"
-version: "1.0.0"
-author: "admin"
+version: "0.1.0"
 depends:
-  - core
   - ui
+  - core
 data:
   - views/menu.yml
-  - views/views.yml
+  
+  

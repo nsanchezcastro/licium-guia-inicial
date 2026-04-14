@@ -1,0 +1,64 @@
+- model: asset_lending.location
+  ext_id: location_main_office
+  fields:
+    name: "Oficina Central"
+    code: "HQ-01"
+    is_active: true
+
+- model: asset_lending.asset
+  ext_id: asset_laptop_01
+  fields:
+    name: "Laptop Dell XPS"
+    asset_code: "LAP-001"
+    status: "available"
+    location_id.ext_id: location_main_office
+
+# --- GRUPOS DE SEGURIDAD ---
+- model: core.group
+  ext_id: asset_lending_group_reader
+  fields: { name: "Lector de Préstamos" }
+
+- model: core.group
+  ext_id: asset_lending_group_manager
+  fields: { name: "Gestor de Préstamos" }
+
+# --- REGLAS ACL (Llave para el Access Denied) ---
+- model: core.acl_rule
+  ext_id: acl_asset_manager_all
+  fields:
+    name: "Gestor: Acceso Total Assets"
+    model_key: "asset_lending.asset"
+    group_id.ext_id: asset_lending_group_manager
+    rule_type: "allow"
+    perm_read: true
+    perm_write: true
+    perm_create: true
+    perm_delete: true
+
+- model: core.acl_rule
+  ext_id: acl_loan_manager_all
+  fields:
+    name: "Gestor: Acceso Total Préstamos"
+    model_key: "asset_lending.loan"
+    group_id.ext_id: asset_lending_group_manager
+    rule_type: "allow"
+    perm_read: true
+    perm_write: true
+    perm_create: true
+    perm_delete: true
+
+- model: core.group
+  ext_id: asset_lending_group_manager
+  fields: { name: "Gestor de Préstamos" }
+
+- model: core.acl_rule
+  ext_id: acl_asset_manager_total
+  fields:
+    name: "Gestor: CRUD Activos"
+    model_key: "asset_lending.asset"
+    group_id.ext_id: asset_lending_group_manager
+    rule_type: "allow"
+    perm_read: true
+    perm_write: true
+    perm_create: true
+    perm_delete: true
