@@ -1,176 +1,40 @@
-- model: ui.action
-  ext_id: asset_lending_action_checkout
+- model: ui.menuitem
+  ext_id: asset_menu_root
   fields:
-    name: "Prestar"
-    model_key: "asset_lending.asset"
-    type: "server"           
-    method: "checkout"
-    icon: "mdi-hand-back-right"
-    target: "record"
-    menu: false
+    title: "Assets"
+    icon: mdi-devices
+    color_primary: "#4CAF50"
 
 - model: ui.action
-  ext_id: asset_lending_action_return
+  ext_id: asset_action_assets
   fields:
-    name: "Devolver"
-    model_key: "asset_lending.asset"
-    type: "server"           
-    method: "return_asset"
-    icon: "mdi-keyboard-return"
-    target: "record"
-    menu: false
-
-- model: ui.action
-  ext_id: asset_lending_action_asset
-  fields:
-    name: "Recursos"
-    route: "asset-lending/asset"
-    model_key: "asset_lending.asset"
-    menu: true
-    views.ext_id: 
-      - asset_lending_view_asset_list
-      - asset_lending_view_asset_form_v2
-
-- model: ui.action
-  ext_id: asset_lending_action_location
-  fields:
-    name: "Ubicaciones"
-    route: "asset-lending/location"
-    model_key: "asset_lending.location"
-    menu: true
-    views.ext_id: ["asset_lending_view_location_list", "asset_lending_view_location_form"]
-
-- model: ui.action
-  ext_id: asset_lending_action_loan_view
-  fields:
-    name: "Historial de Préstamos"
-    model_key: "asset_lending.loan"
-    route: "asset-lending/loans"
-    views.ext_id: ["asset_lending_view_loan_list"]
-
-- model: ui.action
-  ext_id: asset_lending_action_maintenance_start
-  fields:
-    name: "Poner en Mantenimiento"
-    model_key: "asset_lending.asset"
-    type: "server"
-    method: "mark_maintenance"
-    icon: "mdi-tools"
-    target: "record"
-
-- model: ui.action
-  ext_id: asset_lending_action_maintenance_stop
-  fields:
-    name: "Finalizar Mantenimiento"
-    model_key: "asset_lending.asset"
-    type: "server"
-    method: "release_maintenance"
-    icon: "mdi-check-circle"
-    target: "record"
-
-# --- VISTAS (Nivel 2 + Mejoras Nivel 3) ---
-- model: ui.view
-  ext_id: asset_lending_view_asset_list
-  fields:
-    name: "asset_lending.asset - Lista"
+    name: "Gestión de Recursos"
+    route: assets/inventory
     model_key: asset_lending.asset
-    type_id.ext_id: ui.ui_view_type_list
-    definition:
-      columns:
-        - { field: name, label: Recurso }
-        - field: status
-          label: Estado
-          chip: true
-          color_map: { available: success, loaned: error, maintenance: warning }
+    menu: true
+    default_multi_read_view_id.ext_id: asset_view_asset_list
 
-- model: ui.view
-  ext_id: asset_lending_view_location_list
+- model: ui.menuitem
+  ext_id: asset_menu_inventory
   fields:
-    name: "asset_lending.location - Lista"
-    model_key: asset_lending.location
-    type_id.ext_id: ui.ui_view_type_list
-    definition:
-      columns:
-        - { field: name, label: Nombre }
-        - { field: code, label: Código }
+    title: "Inventario"
+    icon: mdi-format-list-bulleted
+    parent_id.ext_id: asset_menu_root
+    action_id.ext_id: asset_action_assets
 
-- model: ui.view
-  ext_id: asset_lending_view_asset_form_v2
+- model: ui.action
+  ext_id: asset_action_loans
   fields:
-    name: "asset_lending.asset - Formulario V2"
-    model_key: asset_lending.asset
-    type_id.ext_id: ui.ui_view_type_form
-    actions.ext_id: 
-      - asset_lending_action_checkout
-      - asset_lending_action_return
-      - asset_lending_action_maintenance_start
-      - asset_lending_action_maintenance_stop
-    definition:
-      action_config:
-        asset_lending_action_checkout:
-          attrs:
-            invisible: [["status", "!=", "available"]] 
-        asset_lending_action_return:
-          attrs:
-            invisible: [["status", "=", "available"]] 
-      groups:
-        - label: Información General
-          fields: [name, asset_code, status, location_id]
-      side_actions:
-        - name: "Historial de Préstamos"
-          icon: "mdi-history"
-          type: "action"
-          action_id.ext_id: asset_lending_action_loan_view
-          domain: [["asset_id", "=", "active_id"]]
-      
-   
-- model: ui.view
-  ext_id: asset_lending_view_location_form
-  fields:
-    name: "asset_lending.location - Formulario"
-    model_key: asset_lending.location
-    type_id.ext_id: ui.ui_view_type_form
-    definition:
-      groups:
-        - label: Datos
-          fields: [name, code, is_active]
-      side_actions: # SMART BUTTON (Nivel 3)
-        - name: "Activos aquí"
-          icon: "mdi-laptop"
-          type: "action"
-          action_id.ext_id: asset_lending_action_asset
-          domain: [["location_id", "=", "active_id"]]
-
-- model: ui.view
-  ext_id: asset_lending_view_loan_list
-  fields:
-    name: "asset_lending.loan - Lista"
+    name: "Gestión de Préstamos"
+    route: assets/loans
     model_key: asset_lending.loan
-    type_id.ext_id: ui.ui_view_type_list
-    definition:
-      columns:
-        - { field: asset_id, label: Recurso }
-        - { field: borrower_user_id, label: Usuario }
-        - { field: checkout_at, label: Fecha Prestamo }
-        - { field: status, label: Estado, chip: true }
-
-# --- MENÚS ---
-- model: ui.menuitem
-  ext_id: asset_lending_menu_root
-  fields: { title: "Assets", icon: mdi-toolbox-outline }
+    menu: true
+    default_multi_read_view_id.ext_id: asset_view_loan_list
 
 - model: ui.menuitem
-  ext_id: asset_lending_menu_assets
+  ext_id: asset_menu_loans
   fields:
-    title: "Recursos"
-    parent_id.ext_id: asset_lending_menu_root
-    action_id.ext_id: asset_lending_action_asset
-
-- model: ui.menuitem
-  ext_id: asset_lending_menu_locations
-  fields:
-    title: "Ubicaciones"
-    parent_id.ext_id: asset_lending_menu_root
-    action_id.ext_id: asset_lending_action_location
-
-
+    title: "Préstamos"
+    icon: mdi-hand-shake
+    parent_id.ext_id: asset_menu_root
+    action_id.ext_id: asset_action_loans

@@ -1,9 +1,0 @@
-- model: core.setting
-  ext_id: setting_practice_checklist_enforce_done
-  fields:
-    module: practice_checklist
-    key: practice_checklist.enforce_all_items_done
-    value: "true"
-    value_type: boolean
-    category: "General"
-    description: "Si es true, no permite cerrar el checklist si hay ítems pendientes."
