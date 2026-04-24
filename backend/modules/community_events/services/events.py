@@ -1,30 +1,51 @@
-from __future__ import annotations
-from fastapi import HTTPException
-from app.core.base import BaseService
-from app.core.services import exposed_action
+from app.core.service import BaseService
+from app.core.decorators import exposed_action
+from app.core.exceptions import ValidationError
 from ..models.events import Event
 
 class EventService(BaseService):
-    
-    @exposed_action("write", groups=["core_group_authenticated"])
-    def register(self, event_id: int) -> dict:
-        """Acción para que un usuario se apunte a un evento."""
-        event = self.repo.session.get(Event, int(event_id))
-        if not event:
-            raise HTTPException(404, "Evento no encontrado")
-        
-        if not event.is_published:
-            raise HTTPException(400, "El evento no acepta inscripciones aún")
+    model = Event
 
-        
-        return {"status": "success", "message": f"Te has inscrito correctamente en {event.name}"}
+    @exposed_action("write", groups=["core_group_authenticated", "staff_comunidad"])
+    def register_participant(self, event_id: int):
+        """
+        Inscribe a un usuario en un evento verificando el aforo.
+        """
+        session = self.app.repo.session
+        event = session.query(Event).filter(Event.id == event_id).first()
 
-    @exposed_action("write", groups=["community_group_staff", "core_group_superadmin"])
-    def toggle_publish(self, id: int):
-        """Acción para que el staff publique o retire un evento."""
-        event = self.repo.session.get(Event, int(id))
         if not event:
-            raise HTTPException(404, "Evento no encontrado")
-        event.is_published = not event.is_published
-        self.repo.session.commit()
-        return {"id": event.id, "is_published": event.is_published}
+            raise ValidationError("El evento no existe.")
+
+        #validación de aforo 
+        if event.current_participants >= event.capacity:
+            return {
+                "status": "error",
+                "message": f"Capacidad agotada para {event.name}. Máximo: {event.capacity} personas."
+            }
+
+        #inscripción
+        event.current_participants += 1
+        
+        #settings 
+        
+        welcome_msg = self.app.core.setting.get("community_events.welcome_message", "Inscripción completada")
+
+        session.commit()
+
+        return {
+            "status": "success",
+            "message": f"{welcome_msg} Nos vemos en {event.name}.",
+            "data": {"current_participants": event.current_participants}
+        }
+
+    @exposed_action("write", groups=["staff_comunidad"])
+    def reset_participants(self, event_id: int):
+        """ Acción administrativa para vaciar el aforo """
+        session = self.app.repo.session
+        event = session.query(Event).filter(Event.id == event_id).first()
+        
+        if event:
+            event.current_participants = 0
+            session.commit()
+            return {"status": "success", "message": "Contador de participantes reiniciado."}
